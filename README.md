@@ -14,6 +14,7 @@ This project processes legal documents related to data such as data governmance,
 
 ### Embeddings & Chat Model
 Embeddings: The MXBAI-EMBED-LARGE model is used to generate embeddings for each text chunk.
+
 Chat Model: The llama3.2 model is used to generate answers based on the retrieved context.
 
 ### Categories
@@ -25,6 +26,7 @@ The following categories are available for querying:
 - Data Protection
 - Competition Law
 - Data Governance
+
 Each category has associated legal URLs for scraping and processing.
 
 ## How to use
@@ -38,11 +40,8 @@ python main.py
 ```
 
 - Select the desired category by entering the corresponding number on the list.
-
 - Ask a Question
-
 - Output: The system will output the answer based on the most relevant legal documents found in the vector store.
-
 
 ## Features to be added
 - Web app interface.
