@@ -4,5 +4,5 @@ __pycache__/
 env/
 .DS_Store
 .Rhistory
-data/vectorstore/
+data/vectorstores/
 get_data.ipynb

@@ -4,6 +4,9 @@ This repository contains a Python-based solution for answering legal questions u
 
 ## Structure
 
-[!alttext](resources/llm_rag.jpg)
+![alttext](resources/llm_rag.jpg)
 
-[!alttext](resources/llm_rag.gif)
+
+## Demo
+
+![alttext](resources/llm_rag.gif)
