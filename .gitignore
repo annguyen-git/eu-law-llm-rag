@@ -4,5 +4,5 @@ __pycache__/
 env/
 .DS_Store
 .Rhistory
-data/vectorstore/chromadb/
+data/vectorstore/
 get_data.ipynb
