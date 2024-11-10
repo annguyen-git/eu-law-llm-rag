@@ -5,4 +5,4 @@ env/
 .DS_Store
 .Rhistory
 data/vectorstore/chromadb/
-
+get_data.ipynb
