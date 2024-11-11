@@ -40,8 +40,10 @@ python main.py
 ```
 
 - Select the desired category by entering the corresponding number on the list.
-- Ask a Question
+- Ask a Question.
 - Output: The system will output the answer based on the most relevant legal documents found in the vector store.
 
-## Features to be added
+## Things to be added
 - Web app interface.
+- Model fine tunning.
+- answer log for repeated questions.
