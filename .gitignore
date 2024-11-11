@@ -6,3 +6,4 @@ env/
 .Rhistory
 data/vectorstores/
 get_data.ipynb
+src/__pycache__/

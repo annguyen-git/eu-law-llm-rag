@@ -58,7 +58,10 @@ Legal Answer (if available):
 # Embeddings and chat model
 embeddings_ollama = OllamaEmbeddings(model="MXBAI-EMBED-LARGE")
 model_ollama = ChatOllama(model="llama3.2", temperature=0)
-LOG_FILE_PATH = 'logs/processed_urls.log'
+
+base_dir =  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LOG_FILE_PATH = os.path.join(base_dir, 'logs/processed_urls.log')
+DATA_PATH = os.path.join(base_dir, 'data/vectorstores')
 
 # Clear all data
 def clear_vectorstore(vectorstore_path):
@@ -116,7 +119,7 @@ def store_data_to_vectorstore(url, category):
         full_text = "\n".join(lines)
 
         print("Data collected")
-        vectorstore_path = f"data/vectorstores/{category.replace(' ', '_')}"
+        vectorstore_path = f"{DATA_PATH}/{category.replace(' ', '_')}"
         # Split the text into chunks
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1500,
@@ -184,8 +187,8 @@ def retrieve_answer():
         store_data_to_vectorstore(url, selected_category)
 
     question = input("Enter your question: ")
-    vectorstore_path = f"data/vectorstores/{selected_category.replace(' ', '_')}"
-    print(f'Searching in data/vectorstore/{vectorstore_path}')
+    vectorstore_path = f"{DATA_PATH}/{selected_category.replace(' ', '_')}"
+    print(f'Looking up for answer. Please wait.')
     try:
         vectorstore = Chroma(persist_directory=vectorstore_path, embedding_function=embeddings_ollama)
         retriever = vectorstore.as_retriever(search_type="similarity")
