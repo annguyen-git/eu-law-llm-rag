@@ -59,10 +59,15 @@ Legal Answer (if available):
 embeddings_ollama = OllamaEmbeddings(model="MXBAI-EMBED-LARGE")
 model_ollama = ChatOllama(model="llama3.2", temperature=0)
 
+# Setup directory
 base_dir =  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOG_FILE_PATH = os.path.join(base_dir, 'logs/processed_urls.log')
 DATA_PATH = os.path.join(base_dir, 'data/vectorstores')
 
+
+
+
+# ---------------------Component functions---------------------
 # Clear all data
 def clear_vectorstore(vectorstore_path):
     if os.path.exists(vectorstore_path):
@@ -71,7 +76,6 @@ def clear_vectorstore(vectorstore_path):
     else:
         print(f"No vectorstore found at '{vectorstore_path}'.")
 
-# ---------------------Component functions---------------------
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
@@ -93,7 +97,7 @@ def log_processed_url(url):
     with open(LOG_FILE_PATH, 'a') as log_file:
         log_file.write(url + '\n')
 
-# ---------------------Main functions---------------------
+# Store data to vectorstore
 def store_data_to_vectorstore(url, category):
     if check_if_url_processed(url):
         # print('Data is already in the vectorstore')
@@ -160,47 +164,65 @@ def store_data_to_vectorstore(url, category):
     except requests.exceptions.RequestException as e:
         print(f"Error during request: {e}")
 
-# ---------------------Input---------------------
+# Select topic
 def select_category():
-    print("Please select a category to process:")
+    print("Please select a topic to process:")
     categories = list(categories_urls.keys())
     
     for i, category in enumerate(categories, start=1):
         print(f"{i}. {category}")
     
-    choice = int(input("\nEnter the number of the category: "))
-    
-    if 1 <= choice <= len(categories):
-        selected_category = categories[choice - 1]
-        print(f"You selected: {selected_category}")
-        return selected_category
-    else:
-        print("Invalid choice, please try again.")
+    try:
+        choice = int(input("\nEnter the number of the topic "))
+        
+        if 1 <= choice <= len(categories):
+            selected_category = categories[choice - 1]
+            print(f"You selected: {selected_category}")
+            return selected_category
+        else:
+            print("Invalid choice, please try again.")
+            return select_category()  # Retry if the number is out of range
+
+    except ValueError:  # If the input is not an integer
+        print("Invalid input, please enter a number.")
         return select_category()
     
-# Full code
+
+
+    
+# ---------------------Main functions---------------------
 def retrieve_answer():
     selected_category = select_category()
-    print(f"Processing category: {selected_category}")
+    print(f"Processing topic: {selected_category}")
     urls = categories_urls[selected_category]
     for url in urls:
         store_data_to_vectorstore(url, selected_category)
+    
+    while True:
+        question = input("Type 'documents' for orignal documents, type 'exit' to quit. \nEnter your question: ")
+        if question.lower() == 'exit':
+            print("Goodbye~")
+            break # Exit
+        if question =='documents':
+            print(f"You can visit following url(s) to see the orignal documents related to the topic: \n{"\n".join(urls)}.")
+            break # Exit
 
-    question = input("Enter your question: ")
-    vectorstore_path = f"{DATA_PATH}/{selected_category.replace(' ', '_')}"
-    print(f'Looking up for answer. Please wait.')
-    try:
-        vectorstore = Chroma(persist_directory=vectorstore_path, embedding_function=embeddings_ollama)
-        retriever = vectorstore.as_retriever(search_type="similarity")
-        prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-        rag_chain = (
-            {"context": retriever | format_docs, "question": RunnablePassthrough()}
-            | prompt_template
-            | model_ollama
-        )
-        response = rag_chain.invoke(question)
-        
-        return response
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        return "An error occurred while retrieving data."
+        vectorstore_path = f"{DATA_PATH}/{selected_category.replace(' ', '_')}"
+        print(f'Looking up for answer. Please wait.')
+        try:
+            vectorstore = Chroma(persist_directory=vectorstore_path, embedding_function=embeddings_ollama)
+            retriever = vectorstore.as_retriever(search_type="similarity")
+            prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+            rag_chain = (
+                {"context": retriever | format_docs, "question": RunnablePassthrough()}
+                | prompt_template
+                | model_ollama
+            )
+            response = rag_chain.invoke(question)
+            
+            print(response.content)
+            if "i don't know" in response.content.lower():
+                print(f"You can visit following url(s) to see the orignal document related to the topic: \n{"\n".join(urls)}.")
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            print("An error occurred while retrieving data.")
