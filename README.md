@@ -30,14 +30,19 @@ The following categories are available for querying:
 
 Each category has associated legal URLs for scraping and processing.
 
+## Prerequisites
+- Install needed packages
+```bash
+pip install -r requirements.txt
+```
+- Install Ollama model Llama 3.2 3B [here](https://github.com/ollama/ollama)
 ## How to use
 
 ![alttext](resources/llm_rag.gif)
 
-- Run this command.
-
+- Run this command
 ```bash
-python main.py
+python src/main.py
 ```
 
 - Select the desired category by entering the corresponding number on the list.
@@ -48,4 +53,4 @@ python main.py
 ## Things to be added
 - Web app interface.
 - Model fine tunning.
-- answer log for repeated questions.
+- Answer log for repeated questions.
