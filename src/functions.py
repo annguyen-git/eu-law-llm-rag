@@ -203,10 +203,9 @@ def retrieve_answer():
         if question.lower() == 'exit':
             print("Goodbye~")
             break # Exit
-        if question =='documents':
+        if question.lower() == 'documents':
             print(f"You can visit following url(s) to see the orignal documents related to the topic: \n{"\n".join(urls)}.")
-            break # Exit
-
+            continue
         vectorstore_path = f"{DATA_PATH}/{selected_category.replace(' ', '_')}"
         print(f'Looking up for answer. Please wait.')
         try:
